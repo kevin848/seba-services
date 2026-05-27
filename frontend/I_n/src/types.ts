@@ -17,3 +17,9 @@ export interface Service {
   active: boolean
   createdAt?: string
 }
+
+export interface Paginated<T> {
+  items: T[]
+  total: number
+  limit: number
+}

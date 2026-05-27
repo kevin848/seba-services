@@ -1,4 +1,4 @@
-import type { Service, Sound } from './types'
+import type { Service, Sound, Paginated } from './types'
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const response = await fetch(path, {
@@ -15,8 +15,13 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   return response.json()
 }
 
-export function getSounds() {
-  return request<Sound[]>('/api/sounds')
+export function getSounds(params?: { page?: number; limit?: number; q?: string }) {
+  const qs = new URLSearchParams()
+  if (params?.page) qs.set('page', String(params.page))
+  if (params?.limit) qs.set('limit', String(params.limit))
+  if (params?.q) qs.set('q', params.q)
+  const path = '/api/sounds' + (qs.toString() ? `?${qs.toString()}` : '')
+  return request<Paginated<Sound>>(path)
 }
 
 export function createSound(sound: Partial<Sound>) {
@@ -31,8 +36,13 @@ export function deleteSound(id: string) {
   return request<void>(`/api/sounds/${id}`, { method: 'DELETE' })
 }
 
-export function getServices() {
-  return request<Service[]>('/api/services')
+export function getServices(params?: { page?: number; limit?: number; q?: string }) {
+  const qs = new URLSearchParams()
+  if (params?.page) qs.set('page', String(params.page))
+  if (params?.limit) qs.set('limit', String(params.limit))
+  if (params?.q) qs.set('q', params.q)
+  const path = '/api/services' + (qs.toString() ? `?${qs.toString()}` : '')
+  return request<Paginated<Service>>(path)
 }
 
 export function createService(service: Partial<Service>) {

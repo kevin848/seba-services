@@ -1,0 +1,20 @@
+.admin-root{font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;color:#111}
+.admin-header{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;border-bottom:1px solid #e6e6e6}
+.admin-header h1{margin:0;font-size:18px}
+.admin-header nav button{margin-left:8px;padding:8px 12px;border-radius:6px;border:1px solid transparent;background:#f5f5f5}
+.admin-header nav button.active{background:#111;color:#fff}
+.admin-main{padding:20px}
+.panel{max-width:1100px;margin:0 auto}
+.panel-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+.panel-head .controls{display:flex;gap:8px}
+.panel-head input{padding:8px 10px;border:1px solid #ddd;border-radius:6px}
+.item-form{display:flex;flex-direction:column;gap:8px;padding:12px;border:1px solid #f0f0f0;border-radius:8px;margin-bottom:16px;background:#fff}
+.item-form input,.item-form textarea{padding:8px;border:1px solid #ddd;border-radius:6px}
+.item-form textarea{min-height:80px}
+.form-actions{display:flex;gap:8px}
+.form-actions button{padding:8px 12px;border-radius:6px}
+.list table{width:100%;border-collapse:collapse}
+.list th,.list td{padding:10px;border-bottom:1px solid #eee;text-align:left}
+.actions button{margin-left:6px}
+.pager{display:flex;justify-content:space-between;align-items:center;margin-top:12px}
+.checkbox{display:inline-flex;align-items:center;gap:8px}
