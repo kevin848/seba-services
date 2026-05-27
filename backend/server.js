@@ -90,35 +90,51 @@ app.use('/api/sounds', soundsRouter);
 // Services routes
 const servicesRouter = express.Router();
 
-servicesRouter.get('/', async (req, res) => {
-  const items = await Service.find().sort({ createdAt: -1 });
-  res.json(items);
-});
+servicesRouter.get('/', wrap(async (req, res) => {
+  const { limit, skip, q } = parseListQuery(req);
+  const filter = q ? { $or: [{ name: new RegExp(q, 'i') }, { description: new RegExp(q, 'i') }] } : {};
+  const [items, total] = await Promise.all([
+    Service.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit),
+    Service.countDocuments(filter)
+  ]);
+  res.json({ items, total, limit });
+}));
 
-servicesRouter.post('/', async (req, res) => {
-  const item = new Service(req.body);
+servicesRouter.post('/', wrap(async (req, res) => {
+  const { name, description, price } = req.body || {};
+  if (!name || typeof name !== 'string') return res.status(400).json({ message: '`name` is required' });
+  const item = new Service({ name: name.trim(), description, price });
   await item.save();
   res.status(201).json(item);
-});
+}));
 
-servicesRouter.get('/:id', async (req, res) => {
+servicesRouter.get('/:id', wrap(async (req, res) => {
   const item = await Service.findById(req.params.id);
   if (!item) return res.status(404).json({ message: 'Not found' });
   res.json(item);
-});
+}));
 
-servicesRouter.put('/:id', async (req, res) => {
-  const item = await Service.findByIdAndUpdate(req.params.id, req.body, { new: true });
+servicesRouter.put('/:id', wrap(async (req, res) => {
+  const updates = req.body || {};
+  if (updates.name && typeof updates.name !== 'string') return res.status(400).json({ message: '`name` must be a string' });
+  const item = await Service.findByIdAndUpdate(req.params.id, updates, { new: true, runValidators: true });
   if (!item) return res.status(404).json({ message: 'Not found' });
   res.json(item);
-});
+}));
 
-servicesRouter.delete('/:id', async (req, res) => {
+servicesRouter.delete('/:id', wrap(async (req, res) => {
   await Service.findByIdAndDelete(req.params.id);
   res.status(204).end();
-});
+}));
 
 app.use('/api/services', servicesRouter);
+
+// Basic error handler
+app.use((err, req, res, next) => {
+  console.error(err && err.stack ? err.stack : err);
+  if (res.headersSent) return next(err);
+  res.status(500).json({ message: 'Internal server error' });
+});
 
 app.get('/', (req, res) => res.send('I&N Sounds & Services API'));
 
